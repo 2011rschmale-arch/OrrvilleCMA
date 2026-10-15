@@ -1,0 +1,63 @@
+SECURE LAUNCH CHECKLIST — Orrville C&MA Church
+
+Do these steps in this order. The site package redirects all traffic to HTTPS,
+so do not publish the redirect until the SSL certificate is valid.
+
+PART 1 — SSL & GOING LIVE
+
+1. In GoDaddy Web Hosting (cPanel), open cPanel Admin > SSL/TLS Status.
+2. Confirm that BOTH orrvillecma.org and www.orrvillecma.org show a valid,
+   active certificate. If needed, select the domains and run AutoSSL.
+3. In a private/incognito browser window, open https://www.orrvillecma.org.
+   Continue only when there is no certificate warning and the browser shows a
+   normal secure connection.
+4. Upload the contents of this package to the domain's web root. Do not upload
+   the ZIP itself as the site. The included .htaccess forces HTTPS, redirects
+   the non-www domain to www, adds baseline security headers (including a
+   Content-Security-Policy), enables compression and browser caching, blocks
+   direct access to the two internal .txt files in this package, and uses the
+   branded 404 page.
+5. In cPanel > Domains, turn on Force HTTPS Redirect as a second layer of
+   protection (it should only be enabled after step 2 succeeds).
+6. Verify these URLs:
+   - http://orrvillecma.org
+   - http://www.orrvillecma.org
+   - https://orrvillecma.org
+   - https://www.orrvillecma.org
+   Every address must end at https://www.orrvillecma.org with no warning.
+
+PART 2 — FUNCTIONAL TESTING (do all of these before announcing the new site)
+
+7. Submit one test contact-form message and confirm that it arrives at the
+   church office email address (check the spam folder too — if it lands
+   there, the domain likely needs SPF/DKIM records added in GoDaddy DNS).
+8. Click the "Give" button and confirm it opens the correct EasyTithe/Amplify
+   giving page. A real test donation isn't necessary, but load the page and
+   confirm the church name and amount fields look correct.
+9. On the Bulletin page, confirm the current week's bulletin is showing (not
+   a stale cached version) and download the kids' sermon notes PDF to
+   confirm it opens correctly.
+10. On the Worship page, confirm the live-stream embed shows the correct
+    channel, and that recent videos populate correctly.
+11. Test the site on an actual phone (not just a resized desktop browser):
+    check the hamburger menu, the flip-card carousel on the homepage, and
+    the sticky hero scroll effect.
+12. Test in Safari specifically, on both Mac and iPhone if possible — the
+    sticky hero effect relies on CSS features (position:sticky,
+    backdrop-filter) that Safari has historically handled less predictably
+    than Chrome or Firefox.
+
+PART 3 — FINDABILITY (do these once the site is live at the final URL)
+
+13. Claim or verify the church's Google Business Profile. Confirm the
+    address, phone number, and service times match the site exactly.
+14. In Google Search Console, verify ownership of www.orrvillecma.org and
+    submit https://www.orrvillecma.org/sitemap.xml.
+15. Do the same in Bing Webmaster Tools if desired.
+16. Check that the church's other listings (Facebook, Yelp, any denomination
+    directory) show the same name, address, and phone number as the site —
+    inconsistent listings elsewhere hurt how easily the church is found in
+    local search results.
+
+If HTTPS produces a certificate warning at step 3, stop. Resolve the certificate
+or DNS issue in GoDaddy before enabling the redirect or publishing this package.

@@ -1,0 +1,326 @@
+/* Fraunces + Inter are loaded via <link rel="preconnect"> + <link rel="stylesheet">
+   in each page's <head> (not @import — @import blocks in series behind this
+   file's own download; a <link> lets the browser fetch fonts and CSS in
+   parallel, which is faster). See the <head> of any page for the tags. */
+
+/* ============================================================
+   CMA2 SKIN LAYER — loads AFTER cma.css and overrides it.
+   Do not delete cma.css; this file only re-tokens colors/type,
+   converts the nav to a hybrid hamburger nav at every screen
+   size, adds the sticky-hero rollover effect on the homepage,
+   and styles the new flip-card carousel.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. RE-TOKEN THE PALETTE + TYPE
+   (same variable names as cma.css, so every existing component
+   built on var(--cma-navy) / var(--cma-gold) / var(--serif) etc.
+   picks up the new look automatically, with no markup changes)
+   ------------------------------------------------------------ */
+:root {
+  --cma-navy:    #253a40;  /* was #1a2744 — deep teal-charcoal */
+  --cma-navy-dk: #1a2c31;  /* was #111a2e */
+  --cma-navy-md: #384f4a;  /* was #253560 — muted sage-teal */
+  --cma-gold:    #be9d63;  /* was #c8963e — warm gold */
+  --cma-gold-lt: #d3b685;  /* was #e8b96a */
+  --cma-cream:   #faf6ef;  /* was #f9f5ef */
+  --cma-sand:    #f2ead9;  /* was #ede6d8 */
+  --cma-text:    #2b2620;
+  --cma-muted:   #6b655c;
+  --serif:       'Fraunces', Georgia, serif;      /* was Cormorant Garamond */
+  --sans:        'Inter', system-ui, sans-serif;
+  --cma-tan:     #9d7751;  /* new — third accent for the carousel/cards */
+  --cma-gold-dk: #7a6133;  /* new — darker gold for <em> accents on light
+                               backgrounds; --cma-gold itself only hits ~2.2:1
+                               against cream/sand, well under WCAG's 3:1 floor
+                               for large text. This hits ~4.9–5.4:1. */
+}
+
+body { font-family: var(--sans); }
+
+/* dh headings default to weight 300 in cma.css (Cormorant reads well thin;
+   Fraunces needs more weight to avoid looking frail) */
+.dh, .hero-h1 { font-weight: 500; }
+
+/* Accessibility fix: cma.css's .dh em is gold-on-light by default (used
+   wherever a heading sits on a cream/sand section, not just the navy
+   "light" variant), which fails WCAG contrast. .dh.light em (dark-bg
+   headings) is untouched — it's a more specific selector and still wins. */
+.dh em { color: var(--cma-gold-dk); }
+
+/* ------------------------------------------------------------
+   2. HYBRID NAV — apply the drawer/hamburger treatment at every
+   breakpoint instead of only under 991.98px. This turns the old
+   "mobile-only slide-in menu, full inline navbar on desktop"
+   into a slim persistent bar + hamburger everywhere, matching
+   the approved CMA2 nav pattern.
+   ------------------------------------------------------------ */
+#mainNav { padding-top: .6rem; padding-bottom: .6rem; }
+#mainNav .container-fluid { display: flex; align-items: center; justify-content: space-between; }
+
+/* Hide Bootstrap's inline desktop nav row entirely — the drawer
+   (restyled below into a full mega-panel) is now the only menu,
+   at every screen size. */
+#navMenu { display: none !important; }
+#navMenu.nav-drawer-open { display: flex !important; }
+
+#mainNav .navbar-toggler {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border: none;
+  padding: 0;
+  box-shadow: none !important;
+  cursor: pointer;
+}
+.navbar-toggler-icon {
+  background-image: none;
+  position: relative;
+  width: 22px; height: 16px;
+  display: block;
+  pointer-events: none;
+}
+.navbar-toggler-icon,
+.navbar-toggler-icon::before,
+.navbar-toggler-icon::after {
+  background: #fff;
+}
+.navbar-toggler-icon::before,
+.navbar-toggler-icon::after { content: ""; position: absolute; left: 0; width: 100%; height: 2px; }
+.navbar-toggler-icon { height: 2px; top: 7px; }
+.navbar-toggler-icon::before { top: -7px; }
+.navbar-toggler-icon::after  { top: 7px; }
+
+/* Quick links that stay visible in the slim bar alongside the
+   hamburger, independent of the full drawer menu. */
+.nav-quicklinks {
+  display: flex; align-items: center; gap: 1.6rem; margin-right: 1.2rem;
+}
+.nav-quicklinks a {
+  color: rgba(255,255,255,.85); font-size: .84rem; font-weight: 500;
+  text-decoration: none; letter-spacing: .02em;
+}
+.nav-quicklinks a:hover { color: var(--cma-gold-lt); }
+@media (max-width: 700px) { .nav-quicklinks a:not(.nq-give) { display: none; } }
+.nq-give {
+  background: var(--cma-gold); color: var(--cma-navy) !important; font-weight: 700;
+  padding: .5rem 1.1rem; border-radius: var(--radius);
+}
+.nq-give:hover { background: var(--cma-gold-lt); }
+
+/* The drawer becomes a full-viewport mega panel at every size,
+   not just a narrow mobile slide-in. */
+#navMenu {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+  background: var(--cma-navy-dk) !important;
+  transform: none !important;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .28s ease, visibility 0s linear .28s;
+  z-index: 1045;
+  flex-direction: column;
+  overflow-y: auto;
+}
+#navMenu.nav-drawer-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity .28s ease;
+}
+.nav-drawer-body {
+  max-width: 1180px; margin: 0 auto; width: 100%;
+  padding: 2.5rem 1.5rem 3rem !important;
+}
+#navMenu .navbar-nav {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2.2rem;
+  width: 100%;
+}
+@media (max-width: 820px) {
+  #navMenu .navbar-nav { grid-template-columns: repeat(2, 1fr); gap: 1.6rem; }
+}
+#navMenu .nav-item { border-bottom: none !important; }
+#navMenu .nav-link {
+  font-family: var(--serif); font-size: 1.15rem !important; color: #fff !important;
+  padding: 0 0 .8rem 0 !important; display: block;
+}
+#navMenu .nav-item > .nav-link.dropdown-toggle::after { display: none; }
+#navMenu .dropdown-menu {
+  position: static !important; float: none; background: transparent !important;
+  border: none !important; box-shadow: none !important; min-width: 0; width: 100%;
+  margin: 0 !important; padding: 0 !important; border-left: none !important;
+  display: block !important; /* always expanded in the mega panel, no click-to-open */
+}
+#navMenu .dropdown-item {
+  padding: .5rem 0 !important; color: rgba(255,255,255,.68) !important; font-size: .96rem;
+  background: none !important;
+}
+#navMenu .dropdown-item:hover { color: var(--cma-gold-lt) !important; }
+#navMenu .btn-nav {
+  display: inline-block; margin-top: 2rem !important;
+  background: var(--cma-gold); color: var(--cma-navy);
+  padding: .85rem 2rem; border-radius: var(--radius); text-decoration: none;
+  font-weight: 700; letter-spacing: .05em; text-transform: uppercase; font-size: .82rem;
+}
+
+/* Standalone close button pinned top-right of the panel */
+.nav-drawer-header { display: flex !important; justify-content: flex-end; padding: 1.5rem 1.5rem 0 !important; border-bottom: none !important; max-width: 1180px; margin: 0 auto; width: 100%; }
+.nav-drawer-title { display: none; }
+.nav-drawer-close { font-size: 2rem !important; color: #fff; }
+
+/* ------------------------------------------------------------
+   3. STICKY HERO ROLLOVER (homepage only)
+   The next section rolls up and over the hero as the visitor
+   scrolls, instead of the hero simply scrolling away.
+   ------------------------------------------------------------ */
+#hero {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+/* Every section after the hero needs to be its own stacking layer so it
+   reliably paints over the sticky hero (which, being "positioned", would
+   otherwise bleed through on top of any later *non*-positioned section —
+   this was the cause of the hero text flashing in past the carousel). */
+#hero ~ * {
+  position: relative;
+  z-index: 2;
+}
+#about {
+  border-radius: 26px 26px 0 0;
+  box-shadow: 0 -24px 50px rgba(37, 58, 64, .18);
+}
+
+/* ------------------------------------------------------------
+   4. FLIP-CARD CAROUSEL
+   ------------------------------------------------------------ */
+.carousel-section { padding: 6rem 0; background: var(--cma-navy); }
+.carousel-viewport {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+}
+.carousel-track {
+  display: flex; gap: 1.5rem; width: max-content;
+  transition: transform .5s cubic-bezier(.65,0,.35,1);
+}
+.flip-card { perspective: 1200px; width: 300px; flex: none; height: 360px; }
+.flip-card-inner {
+  position: relative; width: 100%; height: 100%;
+  transform-style: preserve-3d; transition: transform .6s cubic-bezier(.4,0,.2,1);
+  border-radius: var(--radius);
+}
+.flip-card.is-flipped .flip-card-inner,
+.flip-card:hover .flip-card-inner,
+.flip-card:focus-within .flip-card-inner { transform: rotateY(180deg); }
+.flip-face {
+  position: absolute; inset: 0; backface-visibility: hidden; border-radius: var(--radius);
+  padding: 1.75rem; display: flex; flex-direction: column;
+}
+.flip-front { background: var(--cma-navy-md); justify-content: flex-end; }
+.flip-front .fc-kicker { color: var(--cma-gold-lt); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; font-weight: 600; margin-bottom: .6rem; }
+.flip-front h3 { font-family: var(--serif); color: #fff; font-size: 1.3rem; margin-bottom: .5rem; font-weight: 500; }
+.flip-front p { color: rgba(255,255,255,.75); font-size: .92rem; margin: 0; }
+.flip-back { background: var(--cma-gold); color: var(--cma-navy); transform: rotateY(180deg); justify-content: center; }
+.flip-back p { color: var(--cma-navy); font-size: .98rem; line-height: 1.6; margin: 0 0 1rem; }
+.flip-hint {
+  position: absolute; top: 12px; right: 12px; font-size: .68rem; color: rgba(255,255,255,.65);
+  background: rgba(255,255,255,.12); padding: 3px 8px; border-radius: 20px;
+}
+.carousel-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; }
+.carousel-dots { display: flex; gap: .5rem; }
+.carousel-dots button { width: 8px; height: 8px; border-radius: 50%; border: none; background: rgba(255,255,255,.28); padding: 0; cursor: pointer; }
+.carousel-dots button.is-active { background: var(--cma-gold); }
+.carousel-navbtn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,.32); background: none; color: #fff; cursor: pointer; }
+.carousel-navbtn:hover { border-color: var(--cma-gold); color: var(--cma-gold); }
+.carousel-navwrap { display: flex; gap: .6rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .flip-card-inner, .carousel-track { transition: none !important; }
+}
+
+/* ------------------------------------------------------------
+   5. BULLETIN SIDEBAR SPACING
+   cma.css never defined spacing between stacked sidebar cards
+   (Kids Sermon Notes / Ways to Give / Find Us), so they were
+   butting directly up against each other.
+   ------------------------------------------------------------ */
+.bulletin-sidebar .bulletin-section {
+  margin-bottom: 2.75rem;
+  padding-bottom: 2.75rem;
+  border-bottom: 1px solid rgba(37, 58, 64, .08);
+}
+.bulletin-sidebar .bulletin-section:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+/* .give-card (the four "Ways to Give" tiles on the bulletin page) had no
+   styling anywhere in the codebase — rendering as unstyled plain text next
+   to otherwise-polished cards. Matches the site's existing small-card
+   pattern (bordered, hover lift). */
+.give-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: .5rem;
+  padding: 1.1rem .75rem;
+  height: 100%;
+  background: #fff;
+  border: 1px solid rgba(37, 58, 64, .1);
+  border-radius: var(--radius);
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.give-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--cma-gold);
+  box-shadow: 0 8px 20px rgba(37, 58, 64, .1);
+}
+.give-card i {
+  font-size: 1.4rem;
+  color: var(--cma-gold);
+}
+.give-card p {
+  margin: 0;
+  font-size: .82rem;
+  line-height: 1.4;
+  color: var(--cma-text);
+}
+
+/* ------------------------------------------------------------
+   6. PRINT STYLESHEET
+   Content pages (bulletin, visit, etc.) had no print handling —
+   printing one meant navy sections, the sticky hero, and full
+   nav bleeding across paper in dark ink. This strips it back to
+   plain black-on-white content for anyone printing a page.
+   ------------------------------------------------------------ */
+@media print {
+  #mainNav, #navMenu, .navbar-toggler, .nav-quicklinks,
+  #hero video, .carousel-controls,
+  footer, .btn-gold, .btn-navy, .btn-ghost, .btn-outline-navy, .nq-give,
+  .flip-hint, .gal-strip, .scroll-hint {
+    display: none !important;
+  }
+  * {
+    background: #fff !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  a { color: #000 !important; text-decoration: underline; }
+  #hero { position: static !important; height: auto !important; min-height: 0 !important; }
+  #about, section { margin-top: 0 !important; border-radius: 0 !important; }
+  body { font-size: 11pt; }
+  .carousel-track { display: block !important; transform: none !important; }
+  .flip-card { width: auto !important; height: auto !important; margin-bottom: 1em; page-break-inside: avoid; }
+  .flip-card-inner { transform: none !important; position: static !important; }
+  .flip-face { position: static !important; }
+  .flip-back { display: none !important; }
+}

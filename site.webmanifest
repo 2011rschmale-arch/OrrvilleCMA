@@ -1,0 +1,12 @@
+{
+  "name": "Orrville C&MA Church",
+  "short_name": "Orrville C&MA",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf6ef",
+  "theme_color": "#253a40",
+  "icons": [
+    { "src": "images/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "images/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
