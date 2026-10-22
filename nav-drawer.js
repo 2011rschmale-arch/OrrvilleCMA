@@ -2,8 +2,8 @@
 // Hand-rolled mobile nav drawer using plain CSS transform + class toggling,
 // instead of Bootstrap's Offcanvas component (which had a Firefox-specific
 // rendering bug where the drawer would only display its first item).
-// Bootstrap's Dropdown component is still used for the About/Ministries
-// submenus — this file only controls the slide-in drawer itself.
+// The top-level links are normal links (no Bootstrap dropdown toggle), so they
+// navigate straight to their page; submenus are always visible in the panel.
 (function () {
   var toggleBtn = document.getElementById('navToggleBtn');
   var closeBtn = document.getElementById('navDrawerCloseBtn');
@@ -53,11 +53,31 @@
     }
   });
 
-  // Close the drawer when a real nav link or submenu item is clicked — but
-  // NOT when a dropdown toggle (About / Ministries) is clicked, since that
-  // should only expand its submenu in place, not close the whole drawer.
-  document.querySelectorAll('#navMenu .nav-link:not(.dropdown-toggle), #navMenu .dropdown-item')
-    .forEach(function (l) { l.addEventListener('click', closeDrawer); });
+  // Top-level nav links (About, Ministries, Worship, ...) are plain links that
+  // go to the top of their page. If the visitor is already on that page the
+  // browser would do nothing, so close the drawer and scroll to the very top.
+  // Sub-menu items (with #anchors) keep their normal jump-to-section behavior.
+  function samePage(a) {
+    var url = new URL(a.href, window.location.href);
+    var here = window.location.pathname.replace(/index\.html$/, '');
+    var there = url.pathname.replace(/index\.html$/, '');
+    return url.origin === window.location.origin && here === there;
+  }
+
+  document.querySelectorAll('#navMenu .nav-link, #navMenu .dropdown-item')
+    .forEach(function (l) {
+      l.addEventListener('click', function (e) {
+        var isTopLevel = l.classList.contains('nav-link');
+        var hasHash = l.getAttribute('href').indexOf('#') !== -1;
+        if (isTopLevel && !hasHash && samePage(l)) {
+          e.preventDefault();
+          closeDrawer();
+          window.scrollTo({ top: 0, behavior: 'auto' });
+        } else {
+          closeDrawer();
+        }
+      });
+    });
 
   // If the window is resized up past the drawer breakpoint (e.g. rotating
   // a tablet, or a desktop window being restored), reset drawer state so it
