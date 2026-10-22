@@ -53,7 +53,8 @@
   function populateLivePlayers(videos) {
     var embeds = document.querySelectorAll('.yt-live-embed');
     if (!embeds.length || !videos.length) return;
-    var vId = videos[0].id;
+    var vId = String(videos[0].id || '');
+    if (!/^[A-Za-z0-9_-]{11}$/.test(vId)) return;   // never build an embed URL from an unvalidated ID
     embeds.forEach(function (f) {
       f.src = 'https://www.youtube-nocookie.com/embed/' + vId + '?rel=0';
       f.style.opacity = '1';

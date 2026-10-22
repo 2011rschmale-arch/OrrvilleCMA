@@ -15,5 +15,7 @@ Helpful reminders:
 - Use regular headings, bold text, bullet lists, and links whenever useful.
 - You do NOT need special all-caps headings, symbols, pipes, or website code.
 - Do NOT change the document's sharing or "Publish to web" settings.
-- Changes can take a few minutes to appear on the public website.
+- Changes can take about 5 to 10 minutes to appear on the public website.
+- Images and tables work too, but plain text, bold, headings, bullet lists and
+  links display best (especially on phones).
 - If the bulletin does not appear after 10 minutes, contact the web person.

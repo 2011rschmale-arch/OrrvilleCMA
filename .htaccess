@@ -1,0 +1,95 @@
+# Orrville C&MA Church — site security & performance rules (Apache / cPanel)
+# Matches SECURE_LAUNCH_CHECKLIST.txt. Do NOT upload until the SSL certificate is valid
+# for BOTH orrvillecma.org and www.orrvillecma.org (the HTTPS redirect below depends on it).
+
+# ---------------------------------------------------------------- Basics
+Options -Indexes -MultiViews
+ServerSignature Off
+DirectoryIndex index.html
+ErrorDocument 404 /404.html
+ErrorDocument 403 /404.html
+
+# ---------------------------------------------------------------- HTTPS + www
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# Never allow TRACE/TRACK
+RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK) [NC]
+RewriteRule .* - [F,L]
+
+# Let the host's free-SSL renewal (AutoSSL / Let's Encrypt) validate over plain HTTP
+RewriteCond %{REQUEST_URI} ^/\.well-known/ [NC]
+RewriteRule .* - [L]
+
+# Force HTTPS and the www host in one hop
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !^https$ [NC]
+RewriteRule ^ https://www.orrvillecma.org%{REQUEST_URI} [L,R=301]
+
+RewriteCond %{HTTP_HOST} ^orrvillecma\.org$ [NC]
+RewriteRule ^ https://www.orrvillecma.org%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# ---------------------------------------------------------------- Only normal web methods
+<IfModule mod_authz_core.c>
+<LimitExcept GET POST HEAD>
+  Require all denied
+</LimitExcept>
+</IfModule>
+
+# ---------------------------------------------------------------- Hide things that must never be public
+# Dot-files and folders (.git, .DS_Store, .sermon-feed-cache.json, .bulletin-cache.json ...)
+# except /.well-known/ which SSL renewal needs.
+<IfModule mod_alias.c>
+RedirectMatch 404 "(?i)/\.(?!well-known(?:/|$))"
+RedirectMatch 404 "(?i)^/(?:__MACOSX|images/to%20remove|images/to remove)(?:/|$)"
+</IfModule>
+
+# Internal notes, backups, logs, archives, macOS clippings
+<FilesMatch "(?i)^(BULLETIN_OFFICE_GUIDE|SECURE_LAUNCH_CHECKLIST)\.txt$">
+  Require all denied
+</FilesMatch>
+<FilesMatch "(?i)\.(bak|old|orig|save|swp|sql|log|ini|sh|zip|gz|tar|md|textClipping|yml|yaml|lock|tmp)$">
+  Require all denied
+</FilesMatch>
+
+# ---------------------------------------------------------------- Security headers
+<IfModule mod_headers.c>
+  Header unset X-Powered-By
+  Header always unset X-Powered-By
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+  Header always set Cross-Origin-Opener-Policy "same-origin-allow-popups"
+  Header always set Strict-Transport-Security "max-age=31536000" env=HTTPS
+
+  # Content-Security-Policy: the site's own files plus the specific outside services it uses
+  # (Bootstrap + icons from jsDelivr, Google Fonts, YouTube, Google Maps, Unsplash photos,
+  # the published Google Doc as a bulletin fall-back, and the rss2json sermon fall-back).
+  # 'unsafe-inline' is needed because pages contain inline <style>/<script>.
+  # If a NEW outside service is ever added, add its address here or the browser will block it.
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: https://images.unsplash.com https://*.googleusercontent.com https://*.ggpht.com https://i.ytimg.com; media-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://www.google.com https://docs.google.com; connect-src 'self' https://api.rss2json.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests"
+</IfModule>
+
+# ---------------------------------------------------------------- Compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript text/javascript application/json application/xml image/svg+xml application/manifest+json
+</IfModule>
+
+# ---------------------------------------------------------------- Browser caching
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault                "access plus 1 hour"
+  ExpiresByType text/html       "access plus 5 minutes"
+  ExpiresByType text/css        "access plus 1 day"
+  ExpiresByType application/javascript "access plus 1 day"
+  ExpiresByType text/javascript "access plus 1 day"
+  ExpiresByType image/jpeg      "access plus 1 month"
+  ExpiresByType image/png       "access plus 1 month"
+  ExpiresByType image/webp      "access plus 1 month"
+  ExpiresByType image/x-icon    "access plus 1 month"
+  ExpiresByType video/mp4       "access plus 1 month"
+  ExpiresByType application/pdf "access plus 1 day"
+  ExpiresByType application/json "access plus 0 seconds"
+</IfModule>

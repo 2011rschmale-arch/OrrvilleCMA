@@ -36,7 +36,12 @@ PART 2 — FUNCTIONAL TESTING (do all of these before announcing the new site)
    confirm the church name and amount fields look correct.
 9. On the Bulletin page, confirm the current week's bulletin is showing (not
    a stale cached version) and download the kids' sermon notes PDF to
-   confirm it opens correctly.
+   confirm it opens correctly. View it on a phone in portrait: the text should
+   fill the screen width. (Needs PHP: bulletin-feed.php must be uploaded.)
+9b. Open https://www.orrvillecma.org/bulletin-feed.php directly; it should show
+   JSON beginning {"ok":true. Then confirm https://www.orrvillecma.org/.git/config
+   and https://www.orrvillecma.org/SECURE_LAUNCH_CHECKLIST.txt both show the 404
+   page. Do NOT upload the .git folder to the web host.
 10. On the Worship page, confirm the live-stream embed shows the correct
     channel, and that recent videos populate correctly.
 11. Test the site on an actual phone (not just a resized desktop browser):

@@ -324,3 +324,71 @@ body { font-family: var(--sans); }
   .flip-face { position: static !important; }
   .flip-back { display: none !important; }
 }
+
+
+/* ------------------------------------------------------------
+   6. BULLETIN (server-rendered Google Doc) — full-width on phones
+   The bulletin used to be an iframe, and Google lays a published
+   Doc out with wide built-in page margins, which squeezed the text
+   into a narrow strip on a phone. It is now real page text.
+   ------------------------------------------------------------ */
+.bulletin-doc {
+  background: #fff;
+  border: 1px solid var(--cma-sand);
+  border-radius: 4px;
+  padding: clamp(1rem, 3vw, 2.25rem);
+  color: var(--cma-text);
+  line-height: 1.65;
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  min-height: 12rem;
+}
+.bulletin-doc.is-loading { display: flex; align-items: center; justify-content: center; color: var(--cma-muted); }
+.bulletin-doc .bulletin-loading { margin: 0; }
+.bulletin-doc p { margin: 0 0 .85rem; }
+.bulletin-doc p.bl-gap { margin: 0; height: .6rem; }
+.bulletin-doc .bl-center { text-align: center; }
+.bulletin-doc .bl-right { text-align: right; }
+.bulletin-doc .bl-justify { text-align: left; }
+.bulletin-doc h3, .bulletin-doc h4, .bulletin-doc h5 {
+  font-family: var(--serif); color: var(--cma-navy); line-height: 1.25; margin: 1.5rem 0 .6rem;
+}
+.bulletin-doc h3 { font-size: 1.5rem; } .bulletin-doc h4 { font-size: 1.25rem; } .bulletin-doc h5 { font-size: 1.1rem; }
+.bulletin-doc ul, .bulletin-doc ol { margin: 0 0 .85rem; padding-left: 1.4rem; }
+.bulletin-doc ul.bl-l1, .bulletin-doc ol.bl-l1 { margin-left: 1.25rem; }
+.bulletin-doc ul.bl-l2, .bulletin-doc ol.bl-l2 { margin-left: 2.5rem; }
+.bulletin-doc ul.bl-l3, .bulletin-doc ol.bl-l3 { margin-left: 3.75rem; }
+.bulletin-doc ul.bl-l4, .bulletin-doc ol.bl-l4,
+.bulletin-doc ul.bl-l5, .bulletin-doc ol.bl-l5,
+.bulletin-doc ul.bl-l6, .bulletin-doc ol.bl-l6,
+.bulletin-doc ul.bl-l7, .bulletin-doc ol.bl-l7,
+.bulletin-doc ul.bl-l8, .bulletin-doc ol.bl-l8 { margin-left: 5rem; }
+.bulletin-doc li { margin-bottom: .3rem; }
+.bulletin-doc a { color: var(--cma-navy); text-decoration: underline; text-underline-offset: 2px; }
+.bulletin-doc a:hover { color: var(--cma-gold); }
+.bulletin-doc img { max-width: 100%; height: auto; display: block; margin: .5rem auto; }
+.bulletin-doc .bl-table-wrap { overflow-x: auto; margin: 0 0 1rem; -webkit-overflow-scrolling: touch; }
+.bulletin-doc table { border-collapse: collapse; width: 100%; }
+.bulletin-doc td, .bulletin-doc th { border: 1px solid var(--cma-sand); padding: .45rem .6rem; vertical-align: top; }
+.bulletin-doc td p, .bulletin-doc th p { margin: 0; }
+.bulletin-doc > :first-child { margin-top: 0; }
+.bulletin-doc > :last-child { margin-bottom: 0; }
+
+/* Phones: use nearly the whole screen width for the bulletin column. */
+@media (max-width: 767px) {
+  .bulletin-page .bulletin-container { padding-left: .5rem; padding-right: .5rem; }
+  .bulletin-doc { padding: 1rem .9rem; border-left-width: 0; border-right-width: 0; border-radius: 0; font-size: 1.02rem; }
+  .bulletin-page .bulletin-container > .row { --bs-gutter-x: 0; }
+  .bulletin-page .bulletin-section > h2,
+  .bulletin-page .bulletin-section > .bulletin-intro,
+  .bulletin-page .bulletin-section > p.mt-3 { padding-left: .5rem; padding-right: .5rem; }
+}
+
+/* ------------------------------------------------------------
+   7. ESL SECTION (ministries page)
+   ------------------------------------------------------------ */
+.esl-lang { background: #fff; border-radius: 4px; padding: 1rem 1.25rem; border-left: 3px solid var(--cma-sand); font-size: .9rem; color: var(--cma-muted); line-height: 1.6; }
+.esl-lang p { margin: 0 0 .6rem; }
+.esl-lang strong { color: var(--cma-navy); }
+#esl { scroll-margin-top: 80px; }
