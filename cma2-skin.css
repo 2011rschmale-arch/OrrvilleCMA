@@ -200,6 +200,8 @@ body { font-family: var(--sans); }
    4. FLIP-CARD CAROUSEL
    ------------------------------------------------------------ */
 .carousel-section { padding: 6rem 0; background: var(--cma-navy); }
+.ways-in-video-wrap { max-width: 720px; margin: 0 auto 3rem; border-radius: 14px; overflow: hidden; background: #000; box-shadow: 0 12px 36px rgba(0,0,0,.35); }
+.ways-in-video { display: block; width: 100%; height: auto; }
 .carousel-viewport {
   overflow: hidden;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);

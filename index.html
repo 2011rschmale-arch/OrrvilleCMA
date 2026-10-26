@@ -248,6 +248,13 @@
 <!-- FLIP-CARD CAROUSEL -->
 <section class="carousel-section">
   <div class="container">
+    <div class="ways-in-video-wrap">
+      <video id="ways-in-video" class="ways-in-video" muted playsinline preload="auto"
+        poster="images/few-ways-in-poster.jpg" aria-hidden="true" tabindex="-1"
+        onerror="this.parentNode.style.display='none'">
+        <source src="assets/few-ways-in.mp4" type="video/mp4">
+      </video>
+    </div>
     <div class="row justify-content-center text-center mb-5">
       <div class="col-lg-6 reveal"><span class="section-tag lt">Get to Know Us</span><h2 class="dh light">A Few Ways <em>In</em></h2></div>
     </div>
@@ -337,6 +344,30 @@
   }
   // Latest YouTube video / live-stream embed and Recent Sermons cards are
   // now handled by the shared sermon-feed.js (see script tag below).
+</script>
+<script>
+// "A Few Ways In" video: plays once when scrolled into view (no loop) and
+// holds on its final frame. Runs fresh on every page load.
+(function () {
+  var v = document.getElementById('ways-in-video');
+  if (!v) return;
+  function showEnd() {
+    var go = function () { try { v.currentTime = Math.max(0, v.duration - 0.05); } catch (e) {} };
+    if (v.readyState >= 1) go(); else v.addEventListener('loadedmetadata', go, { once: true });
+  }
+  function start() {
+    var p = v.play();
+    if (p && p.catch) p.catch(showEnd); // autoplay blocked: show the finished frame instead
+  }
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { showEnd(); return; }
+  if (!('IntersectionObserver' in window)) { start(); return; }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (en.isIntersecting) { io.disconnect(); start(); }
+    });
+  }, { threshold: 0.5 });
+  io.observe(v);
+})();
 </script>
 <script src="sermon-feed.js"></script>
 <script src="core-values.js"></script>
