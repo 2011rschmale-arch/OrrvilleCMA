@@ -204,6 +204,8 @@ body { font-family: var(--sans); }
 .ways-in-video { display: block; width: 100%; height: auto; }
 .carousel-viewport {
   overflow: hidden;
+  touch-action: pan-y;            /* vertical page scroll stays native; horizontal swipes drive the carousel */
+  overscroll-behavior-x: contain;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
   mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
 }
@@ -211,15 +213,26 @@ body { font-family: var(--sans); }
   display: flex; gap: 1.5rem; width: max-content;
   transition: transform .5s cubic-bezier(.65,0,.35,1);
 }
+.carousel-track.is-dragging { transition: none; -webkit-user-select: none; user-select: none; }
 .flip-card { perspective: 1200px; width: 300px; flex: none; height: 360px; }
 .flip-card-inner {
   position: relative; width: 100%; height: 100%;
   transform-style: preserve-3d; transition: transform .6s cubic-bezier(.4,0,.2,1);
   border-radius: var(--radius);
 }
-.flip-card.is-flipped .flip-card-inner,
-.flip-card:hover .flip-card-inner,
-.flip-card:focus-within .flip-card-inner { transform: rotateY(180deg); }
+.flip-card.is-flipped .flip-card-inner { transform: rotateY(180deg); }
+/* Hover-flip only for real mouse devices; on touch, :hover sticks after a tap. */
+@media (hover: hover) and (pointer: fine) {
+  .flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
+}
+/* Keyboard focus flips the card (not touch taps). */
+.flip-card:focus-visible .flip-card-inner { transform: rotateY(180deg); }
+.flip-card:has(:focus-visible) .flip-card-inner { transform: rotateY(180deg); }
+.fh-tap { display: none; }
+@media not all and (hover: hover) and (pointer: fine) {
+  .fh-hover { display: none; }
+  .fh-tap { display: inline; }
+}
 .flip-face {
   position: absolute; inset: 0; backface-visibility: hidden; border-radius: var(--radius);
   padding: 1.75rem; display: flex; flex-direction: column;
@@ -394,3 +407,16 @@ body { font-family: var(--sans); }
 .esl-lang p { margin: 0 0 .6rem; }
 .esl-lang strong { color: var(--cma-navy); }
 #esl { scroll-margin-top: 80px; }
+
+
+/* ------------------------------------------------------------
+   MOBILE: horizontal-overflow fix
+   Bootstrap's .g-5 rows use -1.5rem side margins, but .container only has
+   12px side padding on phones, so the page ended up 12px wider than the
+   screen (the white strip when swiping left). Use the standard gutter on
+   phones; column padding then lines up with the container exactly.
+   ------------------------------------------------------------ */
+@media (max-width: 575.98px) {
+  .row.g-5, .row.gx-5 { --bs-gutter-x: 1.5rem; }
+}
+html { overscroll-behavior-x: none; }
