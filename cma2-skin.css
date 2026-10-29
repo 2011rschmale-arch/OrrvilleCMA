@@ -103,7 +103,20 @@ body { font-family: var(--sans); }
   text-decoration: none; letter-spacing: .02em;
 }
 .nav-quicklinks a:hover { color: var(--cma-gold-lt); }
-@media (max-width: 700px) { .nav-quicklinks a:not(.nq-give) { display: none; } }
+/* Phones: the slim bar shows ONE button -- Visit. Watch and Give move into the
+   menu drawer (Give is the last button in the drawer). */
+.nav-drawer-give { display: none; }
+@media (max-width: 700px) {
+  .nav-quicklinks a:not(.nq-visit) { display: none; }
+  .nav-quicklinks { gap: 0; margin-right: .6rem; }
+  .nq-long { display: none; }
+  .nq-visit {
+    background: var(--cma-gold); color: var(--cma-navy) !important; font-weight: 700;
+    font-size: .95rem; padding: .55rem 1.25rem; border-radius: var(--radius);
+  }
+  .nq-visit:hover { background: var(--cma-gold-lt); }
+  .nav-drawer-give { display: inline-block; margin-top: .75rem; }
+}
 .nq-give {
   background: var(--cma-gold); color: var(--cma-navy) !important; font-weight: 700;
   padding: .5rem 1.1rem; border-radius: var(--radius);
@@ -420,3 +433,10 @@ body { font-family: var(--sans); }
   .row.g-5, .row.gx-5 { --bs-gutter-x: 1.5rem; }
 }
 html { overscroll-behavior-x: none; }
+
+
+/* Bulletin: when the Google Doc iframe is the fallback (server feed unavailable),
+   drop the text-card frame so the iframe gets the full column width. */
+.bulletin-doc.is-iframe { padding: 0; border: 0; background: transparent; min-height: 0; }
+.bulletin-doc.is-iframe .bulletin-document { min-height: 1100px; }
+.bulletin-readfull { margin: 0 0 .85rem; }
