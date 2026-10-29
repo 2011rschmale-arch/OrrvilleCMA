@@ -39,7 +39,7 @@
        class="site-logo">
 </a>
     <div class="nav-quicklinks">
-      <a href="visit.html">Plan a Visit</a>
+      <a href="visit.html" class="nq-visit" aria-label="Plan a Visit"><span class="nq-long">Plan a </span>Visit</a>
       <a href="worship.html">Watch</a>
       <a href="https://giving.myamplify.io//app/giving/orrv300174" target="_blank" rel="noopener" class="nq-give">Give</a>
     </div>
@@ -59,6 +59,7 @@
         <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="bulletin.html">Bulletin</a><ul class="dropdown-menu"><li><a class="dropdown-item" href="bulletin.html#this-week">This Week's Bulletin</a></li><li><a class="dropdown-item" href="bulletin.html#kids-notes">Kids Sermon Notes</a></li><li><a class="dropdown-item" href="bulletin.html#giving">Ways to Give</a></li><li><a class="dropdown-item" href="bulletin.html#find-us">Find Us</a></li></ul></li><li class="nav-item dropdown"><a class="nav-link dropdown-toggle active" href="visit.html">Visit</a><ul class="dropdown-menu"><li><a class="dropdown-item" href="visit.html#map">Map &amp; Info</a></li><li><a class="dropdown-item" href="visit.html#schedule">Service Schedule</a></li><li><a class="dropdown-item" href="visit.html#contact">Contact Us</a></li><li><a class="dropdown-item" href="visit.html#faq">First Visit FAQ</a></li></ul></li>
       </ul>
       <a href="visit.html" class="btn-nav ms-lg-2">Plan Your Visit</a>
+      <a href="https://giving.myamplify.io//app/giving/orrv300174" target="_blank" rel="noopener" class="btn-nav nav-drawer-give">Give</a>
       </div>
     </div>
   </div>
@@ -294,15 +295,22 @@
       submit.disabled = true;
       submit.textContent = 'Sending…';
       try {
+        const FALLBACK = 'Sorry, we could not send your message right now. Please call the office at (330) 682-7666 or email orrcma@zoominternet.net.';
         const response = await fetch(form.action, {
           method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' }
         });
-        const result = await response.json();
-        if (!response.ok || !result.ok) throw new Error(result.message || 'Unable to send your message.');
+        // If the server did not answer with JSON (for example the form handler is not
+        // available on this host), show a friendly message instead of a parse error.
+        let result = null;
+        if ((response.headers.get('content-type') || '').indexOf('json') !== -1) {
+          try { result = await response.json(); } catch (e) { result = null; }
+        }
+        if (!result) throw new Error(FALLBACK);
+        if (!response.ok || !result.ok) throw new Error(result.message || FALLBACK);
         form.style.display = 'none';
         success.style.display = 'block';
       } catch (err) {
-        error.textContent = err.message || 'Unable to send your message. Please call the office at (330) 682-7666.';
+        error.textContent = (err instanceof TypeError || !err.message) ? 'Sorry, we could not send your message right now. Please call the office at (330) 682-7666 or email orrcma@zoominternet.net.' : err.message;
         error.hidden = false;
         submit.disabled = false;
         submit.innerHTML = 'Send Message <i class="bi bi-send ms-1"></i>';
