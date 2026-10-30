@@ -1,0 +1,13 @@
+# Third-party libraries and fonts served from this site. File names/versions never change in place,
+# so browsers may keep them for a year (if a library is ever upgraded, give the new file a new name).
+Options -Indexes -ExecCGI
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 1 year"
+</IfModule>
+<IfModule mod_headers.c>
+  Header set Cache-Control "public, max-age=31536000, immutable"
+</IfModule>
+<FilesMatch "(?i)\.(php[0-9]?|phtml|phar|pl|py|cgi|sh|asp|aspx|jsp)$">
+  Require all denied
+</FilesMatch>

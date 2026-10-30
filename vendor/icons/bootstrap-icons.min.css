@@ -1,0 +1,36 @@
+/*! Bootstrap Icons v1.11.3 (MIT) - trimmed to the 32 icons this site uses.
+   To use another icon, copy it from "extra assets/bootstrap-icons-full" (see README there). */
+@font-face{font-display:block;font-family:"bootstrap-icons";src:url("bootstrap-icons-subset.woff2") format("woff2")}
+.bi::before,[class^="bi-"]::before,[class*=" bi-"]::before{display:inline-block;font-family:bootstrap-icons!important;font-style:normal;font-weight:400!important;font-variant:normal;text-transform:none;line-height:1;vertical-align:-.125em;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.bi-airplane-fill::before{content:"\f7cc"}
+.bi-bank::before{content:"\f62e"}
+.bi-book::before{content:"\f194"}
+.bi-book-fill::before{content:"\f192"}
+.bi-box-arrow-up-right::before{content:"\f1c5"}
+.bi-box2-heart::before{content:"\f70c"}
+.bi-building::before{content:"\f1dd"}
+.bi-calendar::before{content:"\f1f6"}
+.bi-cash-coin::before{content:"\f632"}
+.bi-check-circle-fill::before{content:"\f26a"}
+.bi-chevron-down::before{content:"\f282"}
+.bi-clock-fill::before{content:"\f291"}
+.bi-cup-hot::before{content:"\f7eb"}
+.bi-cup-hot-fill::before{content:"\f7ea"}
+.bi-download::before{content:"\f30a"}
+.bi-envelope::before{content:"\f32f"}
+.bi-envelope-fill::before{content:"\f32c"}
+.bi-facebook::before{content:"\f344"}
+.bi-file-earmark-pdf::before{content:"\f63e"}
+.bi-geo-alt::before{content:"\f3e8"}
+.bi-geo-alt-fill::before{content:"\f3e7"}
+.bi-gift::before{content:"\f3ec"}
+.bi-globe2::before{content:"\f3ef"}
+.bi-heart-fill::before{content:"\f415"}
+.bi-journal-text::before{content:"\f444"}
+.bi-music-note-beamed::before{content:"\f49e"}
+.bi-people-fill::before{content:"\f4cf"}
+.bi-play-circle::before{content:"\f4f3"}
+.bi-play-circle-fill::before{content:"\f4f2"}
+.bi-send::before{content:"\f6c0"}
+.bi-telephone-fill::before{content:"\f5b4"}
+.bi-youtube::before{content:"\f62b"}
