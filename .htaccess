@@ -86,6 +86,11 @@ RedirectMatch 404 "(?i)^/(?:__MACOSX|images/to%20remove|images/to remove|extra%2
   </FilesMatch>
 </IfModule>
 
+# ---------------------------------------------------------------- Web app manifest
+<IfModule mod_mime.c>
+  AddType application/manifest+json .webmanifest
+</IfModule>
+
 # ---------------------------------------------------------------- Compression
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript text/javascript application/json application/xml image/svg+xml application/manifest+json image/x-icon
