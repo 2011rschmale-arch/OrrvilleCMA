@@ -55,14 +55,21 @@ body { font-family: var(--sans); }
    into a slim persistent bar + hamburger everywhere, matching
    the approved CMA2 nav pattern.
    ------------------------------------------------------------ */
+/* Menu roll-out settings: change --menu-speed to make it faster/slower. */
+:root {
+  --menu-speed: 0.4s;
+  --menu-ease: cubic-bezier(.45,.05,.25,1);
+  --menu-radius: clamp(140px, 50vw, 320px);
+}
 #mainNav { padding-top: .6rem; padding-bottom: .6rem; }
 #mainNav .container-fluid { display: flex; align-items: center; justify-content: space-between; }
 
 /* Hide Bootstrap's inline desktop nav row entirely — the drawer
    (restyled below into a full mega-panel) is now the only menu,
    at every screen size. */
-#navMenu { display: none !important; }
-#navMenu.nav-drawer-open { display: flex !important; }
+/* Roll-out animation needs the panel to stay laid out (display:flex) so its
+   clip-path can transition; it is hidden with visibility + clip-path instead. */
+#navMenu { display: flex !important; }
 
 #mainNav .navbar-toggler {
   display: inline-flex !important;
@@ -132,17 +139,19 @@ body { font-family: var(--sans); }
   max-width: none !important;
   background: var(--cma-navy-dk) !important;
   transform: none !important;
-  opacity: 0;
   visibility: hidden;
-  transition: opacity .28s ease, visibility 0s linear .28s;
+  /* Rectangle rolls out from the top-left; only the leading (lower-right)
+     corner is rounded, easing to square once the panel fills the screen. */
+  clip-path: inset(0 100% 100% 0 round 0 0 var(--menu-radius) 0);
+  transition: clip-path var(--menu-speed) var(--menu-ease), visibility 0s linear var(--menu-speed);
   z-index: 1045;
   flex-direction: column;
   overflow-y: auto;
 }
 #navMenu.nav-drawer-open {
-  opacity: 1;
   visibility: visible;
-  transition: opacity .28s ease;
+  clip-path: inset(0 0 0 0 round 0 0 0 0);
+  transition: clip-path var(--menu-speed) var(--menu-ease), visibility 0s;
 }
 .nav-drawer-body {
   max-width: 1180px; margin: 0 auto; width: 100%;
